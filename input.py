@@ -1,5 +1,6 @@
 import os
 import numpy as np
+from sklearn import preprocessing
 
 
 def read_arff(file_name):
@@ -20,18 +21,21 @@ def input_data(path):
     for i in range(len(files)):
         key = files[i].split('.')[0]
         total_data[key] = read_arff(path + '/' + files[i])
+        total_data[key] = np.array(total_data[key])
     return total_data
 
 
 def data_clear(data):
-    data = np.array(data)
     fea = data[:, :-1]
     labels = data[:, -1]
     fea = fea.astype('float')
+    min_max_scaler = preprocessing.MinMaxScaler()
+    fea = min_max_scaler.fit_transform(fea)
+
     for i in range(len(labels)):
         if labels[i] == 'Y':
             labels[i] = 1
         else:
             labels[i] = 0
-    labels = np.array(labels).astype('int')
+    labels = np.array(labels).astype('float')
     return fea, labels
