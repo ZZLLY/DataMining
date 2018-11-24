@@ -24,7 +24,7 @@ warnings.filterwarnings(module='sklearn*', action='ignore', category=Deprecation
 
 data_dir = 'result_f1/'
 
-'test2'
+
 def clf(num, fea, labels):
     record = []
     # 模型列表：决策树、朴素贝叶斯、SVM分类、投票
@@ -38,8 +38,10 @@ def clf(num, fea, labels):
     svc = SVC(class_weight='balanced')
     n_iter_search = 20
     parameters = {'C': scipy.stats.expon(scale=100), 'gamma': scipy.stats.expon(scale=.1), 'kernel': ['rbf']}
-    rand = RandomizedSearchCV(svc, param_distributions=parameters, scoring='f1', n_iter=n_iter_search)
-    models = [dt_clf, nb_clf, rand]
+    svm_clf = RandomizedSearchCV(svc, param_distributions=parameters, scoring='f1', n_iter=n_iter_search)
+    # 对上述三种模型投票
+    voting_clf = VotingClassifier(estimators=[("dt", dt_clf), ("nb", nb_clf), ("svc", svm_clf)], voting="hard")
+    models = [dt_clf, nb_clf, svm_clf, voting_clf]
     kf = KFold(n_splits=5)
     for train_index, test_index in kf.split(fea):
         tmp = []
@@ -48,23 +50,11 @@ def clf(num, fea, labels):
         # 用smote对训练集数据过采样
         x_train, y_train = SMOTE().fit_sample(x_train, y_train)
 
-        for model, i in zip(models, range(3)):
+        for model in models:
             model.fit(x_train, y_train)
-            if i == 2:
-                # 取出最佳参数进行建模
-                svm_clf = SVC(C=model.best_params_['C'], gamma=model.best_params_['gamma'],
-                              kernel=model.best_params_['kernel'])
-                svm_clf.fit(x_train, y_train)
-                y_pred = svm_clf.predict(x_test)
-            else:
-                y_pred = model.predict(x_test)
+            y_pred = model.predict(x_test)
             tmp.append(f1_score(y_test, y_pred))
-        # 对上述三种模型投票
-        voting_clf = VotingClassifier(estimators=[("dt", dt_clf), ("nb", nb_clf), ("svc", svm_clf)], voting="hard")
-        voting_clf.fit(x_train, y_train)
-        y_pred = voting_clf.predict(x_test)
-        tmp.append(f1_score(y_test, y_pred))
-        # tmp.append(roc_auc_score(y_test, y_pred))
+            # tmp.append(roc_auc_score(y_test, y_pred))
         record.append(tmp)
     record = np.array(record)
     # num作为标号，方便文件写入记录
