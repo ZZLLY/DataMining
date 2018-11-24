@@ -62,7 +62,7 @@ def clf(num, fea, labels):
         # 对上述三种模型投票
         voting_clf = VotingClassifier(estimators=[("dt", dt_clf), ("nb", nb_clf), ("svc", svm_clf)], voting="hard")
         voting_clf.fit(x_train, y_train)
-        y_pred = model.predict(x_test)
+        y_pred = voting_clf.predict(x_test)
         tmp.append(f1_score(y_test, y_pred))
         # tmp.append(roc_auc_score(y_test, y_pred))
         record.append(tmp)
@@ -83,7 +83,7 @@ if __name__ == '__main__':
         # 分出特征和标签
         total_fea, total_labels = input.data_clear(total_data[key])
         # 单个数据集下特征排序
-        fea_rank = choose_fea.choose(key, total_fea, total_labels)
+        fea_rank = choose_fea.choose(key, total_data[key])
         result = []
         for j in range(1, len(fea_rank)):
             # 以Top-j个特征，预测分类

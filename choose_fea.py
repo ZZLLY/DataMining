@@ -19,21 +19,10 @@ def choose(key, data):
 
         defect = []
         no_defect = []
-        # back_defect = []
-        # back_no_defect = []
         count1 = 0
         count2 = 0
         data = np.array(data)
         fea_num = np.size(data, 1) - 1
-        # # 对原始数据备份，以便后续做特征差值
-        # backup = data
-        # for row in backup:
-        #     if row[-1] == 'Y':
-        #         back_defect.append(row[:-1])
-        #     else:
-        #         back_no_defect.append(row[:-1])
-        # back_defect = np.array(back_defect).astype('float')
-        # back_no_defect = np.array(back_no_defect).astype('float')
 
         # 对列进行标准化处理
         data = data.T
@@ -46,7 +35,7 @@ def choose(key, data):
         data = data.T
         # 根据行最后一位，区分为有缺陷和无缺陷组
         for row in data:
-            if row[-1] == 'Y':
+            if row[-1] == '1':
                 defect.append(row[:-1])
                 count1 += 1
             else:
