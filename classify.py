@@ -24,7 +24,7 @@ warnings.filterwarnings(module='sklearn*', action='ignore', category=Deprecation
 
 data_dir = 'result_f1/'
 
-'测试'
+'test2'
 def clf(num, fea, labels):
     record = []
     # 模型列表：决策树、朴素贝叶斯、SVM分类、投票
