@@ -24,7 +24,7 @@ warnings.filterwarnings(module='sklearn*', action='ignore', category=Deprecation
 
 data_dir = 'result_f1/'
 
-
+"this is a test for pycharm"
 def clf(num, fea, labels):
     record = []
     # 模型列表：决策树、朴素贝叶斯、SVM分类、投票
@@ -33,7 +33,7 @@ def clf(num, fea, labels):
     # 采用网格搜索调参
     # parameters = {'kernel': ('linear', 'rbf'), 'C': [1, 2, 4], 'gamma': [0.125, 0.25, 0.5, 1, 2, 4]}
     # svc = SVC(class_weight='balanced')
-    # grid = GridSearchCV(svc, parameters, scoring='f1', pre_dispatch=8)
+    # svm_clf = GridSearchCV(svc, parameters, scoring='f1', pre_dispatch=8)
     # 采用随机搜索调参
     svc = SVC(class_weight='balanced')
     n_iter_search = 20
